@@ -1,0 +1,55 @@
+--DZ
+--1
+SELECT p.name, AVG(s.price) 
+FROM Product p
+JOIN Sale s ON p.id = s.id_product
+GROUP BY p.name
+HAVING AVG(s.price) > 50
+
+--2
+--SELECT c.name, COUNT(p.id)
+--FROM Category c
+--LEFT JOIN Product p ON c.id = p.id_category
+--LEFT JOIN Delivery d ON p.id = d.id_product
+--GROUP BY c.name
+--HAVING AVG(d.price) > 100
+
+--3
+--SELECT s.name, MIN(d.price) 
+--FROM Supplier s
+--LEFT JOIN Delivery d ON s.id = d.id_supplier
+--WHERE 
+--d.date BETWEEN DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0) 
+--AND DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) + 1, 0) 
+--GROUP BY s.name
+--ORDER BY MIN(d.price) ASC
+
+--4
+SELECT pr.name AS [производитель],
+a.street + ', ' + c.name + ', ' + r.name + ', ' + ct.name AS [полный адрес] ,
+COUNT(p.id) AS [количество],
+SUM(p.price) AS [общая стоимость]
+FROM Producer pr
+JOIN Product p ON pr.id = p.id_producer
+JOIN Address a ON pr.id_address = a.id
+JOIN City c ON a.id_city = c.id
+JOIN Region r ON c.id_region = r.id
+JOIN Country ct ON r.id_country = ct.id
+GROUP BY pr.id, pr.name, a.street, c.name, r.name, ct.name
+HAVING SUM(p.price) BETWEEN 500 AND 20000
+
+--5
+SELECT c.name AS category,
+COUNT(p.id) AS [количество]
+FROM Product p
+JOIN Category c ON p.id_category = c.id
+JOIN Supplier s ON p.id_supplier = s.id
+JOIN Address a ON s.id_address = a.id
+JOIN City ci ON a.id_city = ci.id
+JOIN Region r ON ci.id_region = r.id
+JOIN Country ct ON r.id_country = ct.id
+JOIN Delivery d ON p.id = d.id_product
+WHERE d.price > 400
+AND s.name IN ('УкрТовары', 'Турецкий Импорт', 'Польские Поставки') 
+GROUP BY c.id, c.name
+
